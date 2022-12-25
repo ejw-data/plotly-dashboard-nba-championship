@@ -55,18 +55,19 @@ function init(){
 
   // set default values the page loads one
   // loads Game 1 Quarter 1 data
-  date = '20220602' 
+  // let date = '20220602' 
   game_id = '0042100401'
   quarter = 1
 
   // get data
+  // note:  This shows the old api and below it is the new api
   // let playByPlay= `https://data.nba.net/prod/v1/${date}/${game_id}_pbp_${quarter}.json`;
   let playByPlay = `https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_${game_id}.json`
 
   // create charts
   createCharts(playByPlay, quarter);
 }
-// runs when a change to the UX occurs
+// runs when a change to the UI occurs
 function update(){
   
   // grab game select dropdown value
@@ -96,6 +97,7 @@ function update(){
   }
   else{
     // get data
+    // updated api
     // let playByPlay= `https://data.nba.net/prod/v1/${game_start_date}/${game_id}_pbp_${quarter}.json`;
     let playByPlay = `https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_${game_id}.json`
   
@@ -138,17 +140,15 @@ function createCharts(route, quarter){
 
     // fetch(route, heading).then(function(data){
     d3.json(route).then(function(data) {
-      console.log(data.game.actions)
       let quarterData = data.game.actions.filter(i => i.period == quarter);
       let scores1 = quarterData.filter(i => i.isFieldGoal == true && i.shotResult == "Made");
-      console.log(scores1)
+      
       // select horizontal filter range bar (top-center of page)
       // range bar ends with 12 and moving to the left decreases value
       // 12 minus range bar value gives game clock value aka quarterFilter
       quarterFilter = (12 - parseInt(d3.select('#quarterFilter').node().value))
       // Compare each rows clock (game time) to quarterFilter (range bar game time)
       let scores = scores1.filter(i => timeConvert(i.clock) >= (quarterFilter * 60))
-      console.log(scores)
 
       // setup linechart
       // *****************************************************
