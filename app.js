@@ -6,8 +6,7 @@ let nba_finals = [{"id": 1,"title":"Game 1","game_info":{"game_id":"0042100401",
               {"id": 3,"title":"Game 3","game_info":{"game_id":"0042100403","date":"20220608","location":"Boston","hometeam":"Celtics"}},
               {"id": 4,"title":"Game 4","game_info":{"game_id":"0042100404","date":"20220610","location":"Boston","hometeam":"Celtics"}},
               {"id": 5,"title":"Game 5","game_info":{"game_id":"0042100405","date":"20220613","location":"San Francisco","hometeam":"Warriors"}},
-              {"id": 6,"title":"Game 6","game_info":{"game_id":"0042100406","date":"20220616","location":"Boston","hometeam":"Celtics"}},
-              {"id": 7,"title":"Game 7","game_info":{"game_id":"0042100407","date":"20220619","location":"San Francisco","hometeam":"Warriors"}}]
+              {"id": 6,"title":"Game 6","game_info":{"game_id":"0042100406","date":"20220616","location":"Boston","hometeam":"Celtics"}}]
 
 // created list for ease; demo dropdown 
 let quarters = ['First Quarter','Second Quarter','Third Quarter','Fourth Quarter']
@@ -61,10 +60,11 @@ function init(){
   quarter = 1
 
   // get data
-  let playByPlay= `https://data.nba.net/prod/v1/${date}/${game_id}_pbp_${quarter}.json`;
-  
+  // let playByPlay= `https://data.nba.net/prod/v1/${date}/${game_id}_pbp_${quarter}.json`;
+  let playByPlay = `https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_${game_id}.json`
+
   // create charts
-  createCharts(playByPlay);
+  createCharts(playByPlay, quarter);
 }
 // runs when a change to the UX occurs
 function update(){
@@ -96,10 +96,11 @@ function update(){
   }
   else{
     // get data
-    let playByPlay= `https://data.nba.net/prod/v1/${game_start_date}/${game_id}_pbp_${quarter}.json`;
+    // let playByPlay= `https://data.nba.net/prod/v1/${game_start_date}/${game_id}_pbp_${quarter}.json`;
+    let playByPlay = `https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_${game_id}.json`
   
     // create charts
-    createCharts(playByPlay);
+    createCharts(playByPlay, quarter);
   }
   
 
@@ -133,33 +134,36 @@ function game_selector(){
   );
 }
 // code to manipulate data and call chart functions
-function createCharts(route){
-    d3.json(route).then(function(data) {
-      let allData = data.plays;
-      let scores1 = allData.filter(i => i.isScoreChange == true);
+function createCharts(route, quarter){
 
+    // fetch(route, heading).then(function(data){
+    d3.json(route).then(function(data) {
+      console.log(data.game.actions)
+      let quarterData = data.game.actions.filter(i => i.period == quarter);
+      let scores1 = quarterData.filter(i => i.isFieldGoal == true && i.shotResult == "Made");
+      console.log(scores1)
       // select horizontal filter range bar (top-center of page)
       // range bar ends with 12 and moving to the left decreases value
       // 12 minus range bar value gives game clock value aka quarterFilter
       quarterFilter = (12 - parseInt(d3.select('#quarterFilter').node().value))
       // Compare each rows clock (game time) to quarterFilter (range bar game time)
-      scores = scores1.filter(i => timeConvert(i.clock) >= (quarterFilter * 60))
+      let scores = scores1.filter(i => timeConvert(i.clock) >= (quarterFilter * 60))
       console.log(scores)
 
       // setup linechart
       // *****************************************************
-      let home_team_pts = scores.map(i => i.hTeamScore);
-      let visiting_team_pts = scores.map(i => parseInt(i.vTeamScore));
+      let home_team_pts = scores.map(i => i.scoreHome);
+      let visiting_team_pts = scores.map(i => parseInt(i.scoreAway));
 
       // add start of quarter scores
-      let home_start = allData[0].hTeamScore;
-      let visitor_start = allData[0].vTeamScore;
+      let home_start = scores[0].scoreHome;
+      let visitor_start = scores[0].scoreAway;
       home_team_pts.unshift(home_start);
       visiting_team_pts.unshift(visitor_start);
 
       let time_label = scores.map(i => i.clock);
       // add start of quarter time so scores (above) and times matchup
-      time_label.unshift('12:00');
+      time_label.unshift('PT12M00.00S');
       // convert time string to numerical value
       let time_seconds = time_label.map(i => (720 - timeConvert(i)));
 
@@ -359,8 +363,9 @@ function barChart(hplayers, hfg, vplayers, vfg){
 }
 // convert MM:SS to seconds
 function timeConvert(str){
-  convertTime = str.split(':')
-  return (parseInt(convertTime[1]) + parseInt(convertTime[0])*60)
+  console.log(str)
+  convertTime = str.split('PT')[1].split("M")
+  return (parseInt(convertTime[1].slice(0, convertTime[1].length - 1)) + parseInt(convertTime[0])*60)
 }
 // not used; this format (MM:SS) seems to be treated as labels and not continuous
 function reversetimeConvert(num){
