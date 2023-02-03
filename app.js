@@ -62,7 +62,9 @@ function init(){
   // get data
   // note:  This shows the old api and below it is the new api
   // let playByPlay= `https://data.nba.net/prod/v1/${date}/${game_id}_pbp_${quarter}.json`;
-  let playByPlay = `https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_${game_id}.json`
+  // needs proxy server to change headers like such: https://thingproxy.freeboard.io/fetch/https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_0042100401.json
+  let proxyServer = 'https://thingproxy.freeboard.io/fetch/'
+  let playByPlay = `${proxyServer}https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_${game_id}.json`
 
   // create charts
   createCharts(playByPlay, quarter);
@@ -99,7 +101,9 @@ function update(){
     // get data
     // updated api
     // let playByPlay= `https://data.nba.net/prod/v1/${game_start_date}/${game_id}_pbp_${quarter}.json`;
-    let playByPlay = `https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_${game_id}.json`
+    // needs proxy server to change headers like such: https://thingproxy.freeboard.io/fetch/https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_0042100401.json
+    let proxyServer = 'https://thingproxy.freeboard.io/fetch/'
+    let playByPlay = `${proxyServer}https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_${game_id}.json`
   
     // create charts
     createCharts(playByPlay, quarter);
