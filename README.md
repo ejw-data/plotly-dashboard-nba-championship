@@ -45,7 +45,7 @@ Below is an example of how to form the api endpoint.  The information is specifi
 1. Run `index.html`  
 1. Due CORS block, you may need to run a browser extension to bypass these restrictions.  I have been using the Chrome extension called "Moesif Origin & CORS Changer".  This extension has a toggle button to turn it on and off easily.  The page should display at this point.
 `Note:  In the future I will fix the CORS issues so this Chrome extension is not needed.`  
-
+1.  Update:  Included a simple fix by using a free proxy server - documentation can be found at [https://github.com/Freeboard/thingproxy](https://github.com/Freeboard/thingproxy)
 <br>
 
 ## Example
