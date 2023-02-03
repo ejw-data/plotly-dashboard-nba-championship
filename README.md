@@ -43,6 +43,8 @@ Below is an example of how to form the api endpoint.  The information is specifi
 1. Open repo folder in an IDE like VSCode
 1. Using a virtual server like the VSCode extention LiveServer
 1. Run `index.html`  
+1. Due CORS block, you may need to run a browser extension to bypass these restrictions.  I have been using the Chrome extension called "Moesif Origin & CORS Changer".  This extension has a toggle button to turn it on and off easily.  The page should display at this point.
+`Note:  In the future I will fix the CORS issues so this Chrome extension is not needed.`  
 
 <br>
 
