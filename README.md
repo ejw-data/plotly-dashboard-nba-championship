@@ -14,7 +14,7 @@ Simple dashboard utilizing the NBA api to obtain play-by-play data that is filte
 <br>
 
 ## Github Pages  
-
+Note:  Proxy server needs to be running for the page to be viewable
 https://ejw-data.github.io/plotly-dashboard-nba-championship/  
    
 
@@ -23,6 +23,7 @@ https://ejw-data.github.io/plotly-dashboard-nba-championship/
 ## Technologies    
 *  HTML/CSS/JS
 *  Plotly.js
+*  Flask Proxy Server
 
 <br>
 
@@ -34,7 +35,17 @@ Below is an example of how to form the api endpoint.  The information is specifi
 `game_id` = '0042100401'  
 `quarter` = 1    
 
-`https://data.nba.net/prod/v1/`< date >`/`< game_id >`_pbp_`< quarter >`.json`; 
+url = `https://data.nba.net/prod/v1/`< date >`/`< game_id >`_pbp_`< quarter >`.json`;   
+
+**Update**  
+The api was replaced with another api but the new api does not work unless a proxy server modifies the headers.  The new url information is as follows:  
+
+`game_id` = '0042100401'  
+`proxyServer` = 'http://localhost:5000/'
+
+url = < proxyServer >`https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_`< game_id >`.json`  
+
+Note:  The proxy server is a flask app run locally.
 
 <br>
 
@@ -43,12 +54,9 @@ Below is an example of how to form the api endpoint.  The information is specifi
 1. Open repo folder in an IDE like VSCode
 1. Using a virtual server like the VSCode extention LiveServer
 1. Run `index.html`  
-1. Due CORS block, you may need to run a browser extension to bypass these restrictions.  I have been using the Chrome extension called "Moesif Origin & CORS Changer".  This extension has a toggle button to turn it on and off easily.  The page should display at this point.
-`Note:  In the future I will fix the CORS issues so this Chrome extension is not needed.` 
-
-__Other Updates__
-1.  Included a step 1 fix by using a free proxy server - documentation can be found at [https://github.com/Freeboard/thingproxy](https://github.com/Freeboard/thingproxy) 
-1.  I also needed to add `<meta http-equiv="Permissions-Policy" content="interest-cohort=()">` to the html header but not everything is working yet.  I will need to return to this because there are additional CORS issues.  These additions are being removed for now.
+1. Due CORS block, you may need to apply a method to insert the correct headers so the api will load.  
+    * Option 1:  Run a browser extension to bypass these restrictions.  I have been using the Chrome extension called "Moesif Origin & CORS Changer".  This extension has a toggle button to turn it on and off easily.  The page should display at this point assuming you have changed the `proxyserver` variable in `app.js` to "".  
+    * Option 2:  This is how the repo is currently setup to run - First run the flask proxy server by navigating to the proxy folder in the repo in a terminal and running the flask server by typing `python proxy.py`.  Now when you open the index.html, it should load the data and graphics.  
 
 <br>
 
